@@ -1,0 +1,207 @@
+@import '~antd/dist/antd.less';
+@import "@ant-design/flowchart/dist/index.css";
+
+/* ant */
+@primary-color: #008CB5; // 全局主色
+@link-color: #0d0d0d; // 链接色
+@success-color: #52c41a; // 成功色
+@warning-color: #FABF35; // 警告色
+@error-color: #f5222d; // 错误色
+@font-size-base: 14px; // 主字号
+@heading-color: #252525; // 标题色
+@text-color: rgba(255,255,255,.4); // 主文本色
+@text-color-secondary: rgba(0, 0, 0, 0.45); // 次文本色
+@disabled-color: rgba(0, 0, 0, 0.25); // 失效色
+@border-radius-base: 2px; // 组件/浮层圆角
+@border-color-base: #d9d9d9; // 边框色
+@box-shadow-base: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08),
+  0 9px 28px 8px rgba(0, 0, 0, 0.05); // 浮层阴影
+
+@template-nav-bg-color :transparent;
+@secondary-color: #FABF35;
+@primary-color-dark: #004F68;
+@container-left-right-padding: 9.5rem;
+@section-top-bottom-padding: 8rem;
+@text-color-light: #535B5C;
+
+.ant-select{
+  color: @text-color;
+  
+}
+.ant-select:not(.ant-select-customize-input) .ant-select-selector{
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.3);
+}
+.ant-select-arrow{
+  color: @text-color;
+}
+.ant-select-dropdown{
+  color: rgba(0, 0, 0, 0.85);
+}
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled), .ant-select-item{
+  color: rgba(0, 0, 0, 0.85);
+}
+.ant-slider-mark-text{
+  color: rgba(255,255,255,.3);
+}
+.ant-slider-rail{
+  background-color: rgba(255,255,255,.1);
+}
+.ant-slider:hover .ant-slider-rail{
+  background-color: rgba(255,255,255,.3);
+}
+.ant-btn.ant-btn-background-ghost{
+  color: rgba(255,255,255,.4);
+  border-color: rgba(255,255,255,.4);
+}
+
+/* global */  
+.text-center{
+  text-align: center;
+}
+.padding-24{
+  padding: 24px !important;
+}
+
+/* app */
+.App {
+  background-color: #24292D;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.App-logo { 
+  pointer-events: none;
+}
+
+.App-logo + .App-header-menu{
+  margin-left: 50px;
+}
+
+.App-header {
+  background-color: #2F363E;
+  min-height: 60px;
+  display: flex;
+  font-size: 16px;
+  align-items: center;
+  justify-content: flex-start;
+  color: white;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  padding: 16px;
+}
+
+.App-header-menu{
+  display: flex;
+  gap: 10px;
+}
+
+.App-header-button{
+  margin-left: auto;
+}
+
+.App-main{
+  padding: 30px;
+}
+
+.App-panel{
+  width: 50%;
+}
+
+.App-box-header{
+  text-align: center;
+  padding: 12px;
+  border-bottom: 1px solid #24292D;
+  & h3{
+    color: @text-color;
+    margin-bottom: 0;
+    font-size: 16px;
+  }
+}
+
+.App-row{
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.App-row + .App-row{
+  margin-top: 16px;
+}
+
+.App-box{
+  background-color: #272E36;
+  border-radius: 16px;
+  width: 100%;
+  color: @text-color;
+  height: 100%;
+}
+
+.App-box-small{
+  width: 33.3333%;
+}
+
+.App-box-medium{
+  width: 50%;
+  & canvas{
+    width: 100% !important;
+  }
+}
+
+.App-box-content{
+  padding: 12px;
+  & h3{
+    color: @text-color;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+}
+
+.number-wrap{
+  padding-bottom: 10px;
+  & .number{
+    font-size: 36px;
+  }
+}
+
+.time-zone{
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.time-speed{  
+  display: flex;
+  gap: 8px;
+}
+.time-text{
+  white-space: nowrap;
+}
+
+.time-clock{  
+  font-size: 48px;
+  color: rgba(255,255,255,.8);
+}
+
+.time-slider{
+  width: 80%;
+}
+
+.App-footer{
+  padding: 20px;
+  text-align: center;
+  color: rgba(255,255,255,.2);
+}
+
+// process
+.diagram-component {
+  width: 100%;
+  height: 400px;
+}
+
+.process-content{
+  width: 100% !important;
+  height: 400px !important;
+}
