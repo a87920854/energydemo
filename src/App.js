@@ -26,6 +26,7 @@ const marks = {
   },
 };
 const config = {
+  height: 300,
   xField: 'Date',
   yField: 'scales',
   xAxis: {
@@ -58,7 +59,7 @@ const config = {
   },
 };
 const config2 = {
-  height: 160,
+  height: 110,
   xField: 'Date',
   yField: 'scales',
   xAxis: {
@@ -177,7 +178,7 @@ function App() {
           {/* main panel */}
           <div className='App-panel'>
             <div className='App-box'>
-              <div className='App-box-content padding-24'>
+              <div className='App-box-content flex justify-center align-center'>
                 <Process speed={newSpeed} />           
               </div>
             </div>          
@@ -303,7 +304,7 @@ function App() {
         <div className='App-row' style={{alignItems: 'stretch'}}>
             <div className='App-panel'>
               <div className='App-box'>
-                <div className='App-box-content padding-24'>
+                <div className='App-box-content'>
                   <h3>Load Consumption</h3>
                   <Area data={datajson} {...config} />
                 </div>
@@ -315,13 +316,13 @@ function App() {
 
               <div className='App-row' style={{alignItems: 'stretch'}}>
                   <div className='App-box App-box-medium'>
-                    <div className='App-box-content padding-24'>
+                    <div className='App-box-content'>
                       <h3>ESS-E0001</h3>
                       <Area data={datajson} {...config2} />
                     </div>
                   </div>
                   <div className='App-box App-box-medium'>
-                    <div className='App-box-content padding-24'>
+                    <div className='App-box-content'>
                       <h3>ESS-E0001</h3>
                       <Area data={datajson} {...config2} />
                     </div>
@@ -330,13 +331,13 @@ function App() {
 
               <div className='App-row'>
                   <div className='App-box App-box-medium'>
-                    <div className='App-box-content padding-24'>
+                    <div className='App-box-content'>
                       <h3>PV-P0001</h3>
                       <Area data={datajson} {...config2} />
                     </div>
                   </div>
                   <div className='App-box App-box-medium'>
-                    <div className='App-box-content padding-24'>
+                    <div className='App-box-content'>
                       <h3>PV-P0001</h3>
                       <Area data={datajson} {...config2} />
                     </div>

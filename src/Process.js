@@ -177,7 +177,7 @@ export default function Process ({speed}) {
       // 能源網路      
       const target = graph.addNode({
         x: 380 * (width/containerWidth),
-        y: 70,
+        y: 15,
         width: 120,
         height: 120,
         shape: 'html',
@@ -187,7 +187,7 @@ export default function Process ({speed}) {
       // 台電電力主網
       const icon_factory = graph.addNode({
         x: 50 * (width/containerWidth),
-        y: 10,
+        y: 0,
         width: 151,
         height: 161,
         shape: 'html',
@@ -197,7 +197,7 @@ export default function Process ({speed}) {
       // 儲能系統
       const icon_store = graph.addNode({
         x: 700 * (width/containerWidth),
-        y: 260,
+        y: 200,
         width: 74,
         height: 118,
         shape: 'html',
@@ -217,7 +217,7 @@ export default function Process ({speed}) {
       // 充電樁
       const icon_charger = graph.addNode({
         x: 410 * (width/containerWidth),
-        y: 250,
+        y: 190,
         width: 50,
         height: 133,
         shape: 'html',
@@ -227,7 +227,7 @@ export default function Process ({speed}) {
       // 負載
       const icon_home = graph.addNode({
         x: 50 * (width/containerWidth),
-        y: 260,
+        y: 190,
         width: 133,
         height: 128,
         shape: 'html',
