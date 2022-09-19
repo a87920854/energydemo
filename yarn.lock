@@ -385,7 +385,14 @@
     "@antv/util" "^2.0.9"
     "insert-css" "^2.0.0"
 
-"@antv/g6@^4.2.4", "@antv/g6@^4.7.0":
+"@antv/g6@^4.2.4":
+  "integrity" "sha512-8mkxxvjU2ZM27EZUcbp5Epkr2Kf1si88cXiDnQ5T/zFQX1WBiZc5eQ5E786+rDGwABG0tWL6ksRI6ojipt8kbQ=="
+  "resolved" "https://registry.npmjs.org/@antv/g6/-/g6-4.7.3.tgz"
+  "version" "4.7.3"
+  dependencies:
+    "@antv/g6-pc" "0.7.3"
+
+"@antv/g6@^4.7.0":
   "integrity" "sha512-8mkxxvjU2ZM27EZUcbp5Epkr2Kf1si88cXiDnQ5T/zFQX1WBiZc5eQ5E786+rDGwABG0tWL6ksRI6ojipt8kbQ=="
   "resolved" "https://registry.npmjs.org/@antv/g6/-/g6-4.7.3.tgz"
   "version" "4.7.3"
@@ -630,9 +637,9 @@
     "ml-matrix" "^6.5.0"
 
 "@antv/layout@^0.3.0":
-  "integrity" "sha512-7xi/WAHj7Krzf9qMYLpYJCU+92oBWYS9A/BjMNvBK1RJfQ1L//ZAx3z8+qMISzWFO+y/+x1FE01XYSYjn0s2sQ=="
-  "resolved" "https://registry.npmjs.org/@antv/layout/-/layout-0.3.0.tgz"
-  "version" "0.3.0"
+  "integrity" "sha512-V7/Ys8IcctmGL/b1pYhA1ubSTuymQQcOkXOO3zpzQ/7PfvgW/v5QqcLEMy+roCz+Rr2Y5LmmBZXtgd7DxzpRAw=="
+  "resolved" "https://registry.npmjs.org/@antv/layout/-/layout-0.3.1.tgz"
+  "version" "0.3.1"
   dependencies:
     "@antv/g-webgpu" "0.5.5"
     "@antv/graphlib" "^1.0.0"

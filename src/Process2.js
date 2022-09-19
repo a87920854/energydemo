@@ -8,7 +8,24 @@ import home from './home.svg';
 import solar from './solar.svg';
 import store from './store.svg';
 
-
+const node = {component: (
+  <div
+    style={{
+      color: '#fff',
+      width: '120px',
+      height: '120px',
+      borderRadius: '50%',
+      backgroundImage: 'radial-gradient(50% 50% at 50% 50%, #6ACAE9 6.25%, #009CCD 71.88%)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      fontSize: '18px',
+      fontWeight: 'bold',
+    }}
+  >
+    能源網路
+  </div>
+)}
 export default class Process extends React.Component {
     container(){ return(<div></div>)}
   

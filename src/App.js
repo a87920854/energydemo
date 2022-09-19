@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Select, Slider } from 'antd';
 import { ForwardOutlined } from '@ant-design/icons';
 import { Area } from '@ant-design/plots';
@@ -11,8 +11,89 @@ const { Option } = Select;
 const handleChange = (value) => {
   console.log(`selected ${value}`);
 };
+const marks = {
+  0: '0',
+  160: '4',
+  320: '8',
+  480: '12',
+  640:'16',
+  800:'20',
+  960: {
+    style: {
+      color: '#fff',
+    },
+    label: 24,
+  },
+};
+const config = {
+  xField: 'Date',
+  yField: 'scales',
+  xAxis: {
+    range: [0, 1],
+    tickCount: 5, 
+  },
+  yAxis: {
+    grid: {
+      line: {
+        style: {
+          stroke: '#fff',
+          lineWidth: 1,
+          lineDash: [4, 5],
+          strokeOpacity: 0.2,
+          shadowColor: '#fff',
+          cursor: 'pointer'
+        }
+      }
+    }
+  },
+  line:{
+    color: '#009CCD',
+    size:1
+  },
+  smooth: 'true',
+  areaStyle: () => {
+    return {
+      fill: 'l(270) 0:#272E36 0.5:#009CCD 1:#009CCD',
+    };
+  },
+};
+const config2 = {
+  height: 160,
+  xField: 'Date',
+  yField: 'scales',
+  xAxis: {
+    range: [0, 1],
+    tickCount: 5, 
+  },
+  yAxis: {
+    grid: {
+      line: {
+        style: {
+          stroke: '#fff',
+          lineWidth: 1,
+          lineDash: [4, 5],
+          strokeOpacity: 0.2,
+          shadowColor: '#fff',
+          cursor: 'pointer'
+        }
+      }
+    }
+  },
+  line:{
+    color: '#009CCD',
+    size:1
+  },
+  smooth: 'true',
+  areaStyle: () => {
+    return {
+      fill: 'l(270) 0:#272E36 0.5:#009CCD 1:#009CCD',
+    };
+  },
+};
+
 
 function App() {
+  const [time, setTime] = useState(0);
   const [data, setData] = useState([]);
   const [speed, setSpeed] = useState(0);
   const asyncFetch = () => {
@@ -23,93 +104,25 @@ function App() {
         console.log('fetch data failed', error);
       });
   };
-  const speedHandler = (e)=>{
-    setSpeed(e.value);
+  const runProgram = () =>{
+    if(time < 960){
+      setInterval(() => {
+        setTime((time) =>time + 1);
+      }, 100); 
+    }
+      
   }
-  const marks = {
-    0: '0',
-    16.6: '4',
-    33.3: '8',
-    50: '12',
-    66.6:'16',
-    83.3:'20',
-    100: {
-      style: {
-        color: '#fff',
-      },
-      label: 24,
-    },
-  };
-  const config = {
-    data:datajson,
-    xField: 'Date',
-    yField: 'scales',
-    xAxis: {
-      range: [0, 1],
-      tickCount: 5, 
-    },
-    yAxis: {
-      grid: {
-        line: {
-          style: {
-            stroke: '#fff',
-            lineWidth: 1,
-            lineDash: [4, 5],
-            strokeOpacity: 0.2,
-            shadowColor: '#fff',
-            cursor: 'pointer'
-          }
-        }
-      }
-    },
-    line:{
-      color: '#009CCD',
-      size:1
-    },
-    smooth: 'true',
-    areaStyle: () => {
-      return {
-        fill: 'l(270) 0:#272E36 0.5:#009CCD 1:#009CCD',
-      };
-    },
-  };
-  const config2 = {
-    data:datajson,
-    height: 160,
-    xField: 'Date',
-    yField: 'scales',
-    xAxis: {
-      range: [0, 1],
-      tickCount: 5, 
-    },
-    yAxis: {
-      grid: {
-        line: {
-          style: {
-            stroke: '#fff',
-            lineWidth: 1,
-            lineDash: [4, 5],
-            strokeOpacity: 0.2,
-            shadowColor: '#fff',
-            cursor: 'pointer'
-          }
-        }
-      }
-    },
-    line:{
-      color: '#009CCD',
-      size:1
-    },
-    smooth: 'true',
-    areaStyle: () => {
-      return {
-        fill: 'l(270) 0:#272E36 0.5:#009CCD 1:#009CCD',
-      };
-    },
-  };
+  console.log(time);
+  const speedHandler = (e)=>{
+    setSpeed(speed+1);
+  }
+  const newSpeed = useCallback(()=>{
+    return speed
+  },[speed]) 
+
   useEffect(() => {
     asyncFetch();
-  }, []);
+  }, [time]);
   return (
     <div className="App">
       <header className="App-header">
@@ -144,7 +157,7 @@ function App() {
           </div>
         </div>
         <div className='App-header-button'>
-          <Button type="primary">執行模擬</Button>
+          <Button type="primary" onClick={runProgram}>執行模擬</Button>
         </div>
       </header>
       
@@ -157,7 +170,7 @@ function App() {
               <Button icon={<ForwardOutlined/>} ghost onClick={speedHandler} value="4">4X</Button>          
           </div>
           <div className='time-slider'>
-            <Slider marks={marks} defaultValue={37} />
+            <Slider min={0} max={960} marks={marks} defaultValue={0} value={time} />
           </div>
         </div>
         <div className='App-row' style={{alignItems: 'stretch'}}>
@@ -165,7 +178,7 @@ function App() {
           <div className='App-panel'>
             <div className='App-box'>
               <div className='App-box-content padding-24'>
-                <Process speed={speed} />           
+                <Process speed={newSpeed} />           
               </div>
             </div>          
           </div>
@@ -292,7 +305,7 @@ function App() {
               <div className='App-box'>
                 <div className='App-box-content padding-24'>
                   <h3>Load Consumption</h3>
-                  <Area {...config} />
+                  <Area data={datajson} {...config} />
                 </div>
               </div>          
             </div>
@@ -304,13 +317,13 @@ function App() {
                   <div className='App-box App-box-medium'>
                     <div className='App-box-content padding-24'>
                       <h3>ESS-E0001</h3>
-                      <Area {...config2} />
+                      <Area data={datajson} {...config2} />
                     </div>
                   </div>
                   <div className='App-box App-box-medium'>
                     <div className='App-box-content padding-24'>
                       <h3>ESS-E0001</h3>
-                      <Area {...config2} />
+                      <Area data={datajson} {...config2} />
                     </div>
                   </div>         
               </div>
@@ -319,13 +332,13 @@ function App() {
                   <div className='App-box App-box-medium'>
                     <div className='App-box-content padding-24'>
                       <h3>PV-P0001</h3>
-                      <Area {...config2} />
+                      <Area data={datajson} {...config2} />
                     </div>
                   </div>
                   <div className='App-box App-box-medium'>
                     <div className='App-box-content padding-24'>
                       <h3>PV-P0001</h3>
-                      <Area {...config2} />
+                      <Area data={datajson} {...config2} />
                     </div>
                   </div>         
               </div>             

@@ -9,7 +9,7 @@
 @error-color: #f5222d; // 错误色
 @font-size-base: 14px; // 主字号
 @heading-color: #252525; // 标题色
-@text-color: rgba(255,255,255,.4); // 主文本色
+@text-color: rgba(255,255,255,.7); // 主文本色
 @text-color-secondary: rgba(0, 0, 0, 0.45); // 次文本色
 @disabled-color: rgba(0, 0, 0, 0.25); // 失效色
 @border-radius-base: 2px; // 组件/浮层圆角
@@ -53,6 +53,9 @@
 .ant-btn.ant-btn-background-ghost{
   color: rgba(255,255,255,.4);
   border-color: rgba(255,255,255,.4);
+}
+.ant-slider-track,.ant-slider-handle{
+  transition: all .1s;
 }
 
 /* global */  
@@ -139,6 +142,10 @@
 
 .App-box-small{
   width: 33.3333%;
+  color: rgba(255,255,255,.7) !important;
+  & h3{
+    color: rgba(255,255,255,.7) !important;
+  }
 }
 
 .App-box-medium{
@@ -204,4 +211,24 @@
 .process-content{
   width: 100% !important;
   height: 400px !important;
+}
+
+.energy-source{
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-image:radial-gradient(50% 50% at 50% 50%, #6ACAE9 6.25%, #009CCD 71.88%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.process-content.x6-graph svg{
+  display: none;
+}
+.process-content.x6-graph svg:last-child{
+  display: block;
 }
