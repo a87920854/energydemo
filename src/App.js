@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Select, Slider } from 'antd';
-import { ForwardOutlined } from '@ant-design/icons';
+import { ForwardOutlined, CaretRightOutlined, BackwardOutlined, PauseOutlined, FastForwardOutlined } from '@ant-design/icons';
 import { Area } from '@ant-design/plots';
 import Process from './Process.js' 
 import logo from './logo.svg';
 import './App.less';
 import datajson from './data.json'
 
+const runTime = 100;
 const { Option } = Select;
-const handleChange = (value) => {
-  console.log(`selected ${value}`);
-};
 const marks = {
   0: '0',
   160: '4',
@@ -91,12 +89,28 @@ const config2 = {
     };
   },
 };
-
+let timeInterval = null;
 
 function App() {
   const [time, setTime] = useState(0);
   const [data, setData] = useState([]);
+  const [forward, setForward] = useState(false);
   const [speed, setSpeed] = useState(0);
+  
+  const timeTickHandler = () => {
+    let hour = Math.floor(time*90 / 3600);
+    let minute = Math.floor(time*90 % 3600 / 60);
+    if(hour < 10){
+      hour = `0${hour}`
+    }
+    if(minute < 10){
+      minute = `0${minute}`
+    }
+    return `${hour}:${minute}`;
+  }
+  const handleChange = (value) => {
+    console.log(`selected ${value}`);
+  };
   const asyncFetch = () => {
     fetch('http://localhost:3000/data.json')
       .then((response) => response.json())
@@ -105,15 +119,41 @@ function App() {
         console.log('fetch data failed', error);
       });
   };
-  const runProgram = () =>{
-    if(time < 960){
-      setInterval(() => {
-        setTime((time) =>time + 1);
-      }, 100); 
-    }
-      
+  const runProgram = () =>{  
+      clearInterval(timeInterval);  
+      timeInterval = setInterval(() => {
+        setTime((time) => time + 1);
+      }, runTime);     
   }
-  console.log(time);
+  const forwardProgram = () =>{
+    clearInterval(timeInterval);
+    if(forward === false){      
+      timeInterval = setInterval(() => {
+        setTime((time) => time + 2);
+      }, runTime);  
+      setForward(true);   
+    }else{
+      timeInterval = setInterval(() => {
+        setTime((time) => time + 4);
+      }, runTime); 
+      setForward(false);
+    }
+         
+  }
+  const backwardProgram = () =>{  
+    clearInterval(timeInterval);  
+    timeInterval = setInterval(() => {
+      setTime((time) => time - 2);
+    }, runTime);     
+  }
+  const stopProgram = () => {
+    clearInterval(timeInterval);
+    return '24:00'
+  }
+  const resetProgram = () => {
+    clearInterval(timeInterval);
+    setTime(0);
+  }
   const speedHandler = (e)=>{
     setSpeed(speed+1);
   }
@@ -123,7 +163,10 @@ function App() {
 
   useEffect(() => {
     asyncFetch();
-  }, [time]);
+    return function cleanup() {
+      clearInterval(timeInterval);
+    }
+  }, []);
   return (
     <div className="App">
       <header className="App-header">
@@ -158,6 +201,7 @@ function App() {
           </div>
         </div>
         <div className='App-header-button'>
+          <Button onClick={resetProgram} ghost>重置模擬</Button>
           <Button type="primary" onClick={runProgram}>執行模擬</Button>
         </div>
       </header>
@@ -165,10 +209,13 @@ function App() {
       <main className='App-main'>
         <div className='time-zone'>
           <div className='time-text'>時間</div>
-          <div className='time-clock'>03:10</div>
+          <div className='time-clock'>{ time < 960 && time >= 0 ? timeTickHandler() : stopProgram() }</div>
           <div className='time-speed'>
-              <Button icon={<ForwardOutlined />} ghost onClick={speedHandler} value="2">2X</Button>
-              <Button icon={<ForwardOutlined/>} ghost onClick={speedHandler} value="4">4X</Button>          
+              <Button icon={<BackwardOutlined />} ghost onClick={backwardProgram} shape="circle" size="large" />
+              {console.log(time)}
+              <Button icon={<CaretRightOutlined />} ghost onClick={runProgram} shape="circle" size="large" />
+              <Button icon={<PauseOutlined />} ghost onClick={stopProgram} shape="circle" size="large" />
+              <Button icon={<ForwardOutlined/>} ghost onClick={forwardProgram} shape="circle" size="large" />         
           </div>
           <div className='time-slider'>
             <Slider min={0} max={960} marks={marks} defaultValue={0} value={time} />

@@ -157,7 +157,6 @@ export default function Process ({speed}) {
       setWidth(w);
     }
     useEffect(()=> {
-      console.log(container.current.offsetWidth);
       resizeUpdate();
       window.addEventListener('resize',resizeUpdate);   
       
