@@ -1,14 +1,30 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Select, Slider } from 'antd';
-import { ForwardOutlined, CaretRightOutlined, BackwardOutlined, PauseOutlined, FastForwardOutlined } from '@ant-design/icons';
+import Icon, { ForwardOutlined, CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
 import { Area } from '@ant-design/plots';
 import Process from './Process.js' 
 import logo from './logo.svg';
 import './App.less';
-import datajson from './data.json'
+// import './rwd.less';
+// import datajson from './data.json'
 
+//快轉icon
+const FastForwardSvg = ()=> (
+  <svg fill="currentColor" width="1em" height="1em" viewBox="0 0 12 12">
+    <path d="M7.8,5.9L4.4,2.9c-0.1-0.1-0.3,0-0.3,0.2v5.8c0,0.2,0.2,0.3,0.3,0.2l3.4-2.9C7.9,6.1,7.9,5.9,7.8,5.9z M4.1,5.9L0.7,2.9
+      c-0.1-0.1-0.3,0-0.3,0.2v5.8c0,0.2,0.2,0.3,0.3,0.2l3.4-2.9c0,0,0.1-0.1,0.1-0.2C4.1,6,4.1,5.9,4.1,5.9z"/>
+    <path d="M11.6,5.9L8.2,2.9c-0.1-0.1-0.3,0-0.3,0.2v5.8c0,0.2,0.2,0.3,0.3,0.2l3.4-2.9C11.6,6.1,11.6,5.9,11.6,5.9z"/>
+  </svg>
+)
+const FastForwardIcon = (props) => <Icon component={FastForwardSvg} {...props} />;
+
+//動畫更新速率
 const runTime = 100;
+
+//ant option
 const { Option } = Select;
+
+//滾動條 時間點位
 const marks = {
   0: '0',
   80: '2',
@@ -29,6 +45,8 @@ const marks = {
     label: 24,
   },
 };
+
+// 圖表設定
 const config = {
   height: 300,
   xField: 'Date',
@@ -61,7 +79,22 @@ const config = {
       fill: 'l(270) 0:#272E36 0.5:#009CCD 1:#009CCD',
     };
   },
+  meta: {
+    Date: {
+      min: 0,
+      max: 100,
+    },
+  },
+  animation: {
+    // 配置图表第一次加载时的入场动画
+    appear: {
+      animation: 'scale-in-x', // 动画效果
+      duration: 500,  // 动画执行时间
+    },
+  }
 };
+
+// 圖表設定
 const config2 = {
   height: 110,
   xField: 'Date',
@@ -95,14 +128,23 @@ const config2 = {
     };
   },
 };
+
+// 計時器
 let timeInterval = null;
 
+// App
 function App() {
+  //狀態
   const [time, setTime] = useState(0);
   const [data, setData] = useState([]);
-  const [forward, setForward] = useState(false);
-  const [speed, setSpeed] = useState(0);
+  const [forward, setForward] = useState(0);
   
+  //主面板設定
+  const procesConfig = {
+    speed: forward,
+  }
+
+  //數字轉時間(時、分)
   const timeTickHandler = () => {
     let hour = Math.floor(time*90 / 3600);
     let minute = Math.floor(time*90 % 3600 / 60);
@@ -112,67 +154,94 @@ function App() {
     if(minute < 10){
       minute = `0${minute}`
     }
-    return `${hour}:${minute}`;
+    if(time < 960 && time >= 0){     
+      return `${hour}:${minute}`; 
+    }else{
+      clearInterval(timeInterval);
+      if(forward !== 0) setForward(0);
+      return `24:00`; 
+    }    
   }
+
+  //滾動條 change 事件
+  const onChangeSlider = (newValue) => {
+    setTime(newValue);
+  }
+
+  //下拉選單 change 事件
   const handleChange = (value) => {
     console.log(`selected ${value}`);
   };
+
   const asyncFetch = () => {
-    fetch('http://localhost:3000/data.json')
+    fetch('http://192.168.101.85:3000/data.json')
       .then((response) => response.json())
-      .then((json) => setData(json))
+      .then((json) => {
+        console.log(json);
+        let data = JSON.stringify(json);
+        data = JSON.parse(data);
+        setData(data);
+      })
       .catch((error) => {
         console.log('fetch data failed', error);
       });
   };
+
+  //繪製圖表
+  const drawCharts = () => {
+    const newData = data.filter((item,index)=>{
+      return index < Math.floor(time/10);
+    })
+    return newData;
+  }
+
+  // play按鈕
   const runProgram = () =>{  
       clearInterval(timeInterval);  
       timeInterval = setInterval(() => {
         setTime((time) => time + 1);
-      }, runTime);     
+      }, runTime);
+      setForward(1);
   }
+
+  // 加速按鈕
   const forwardProgram = () =>{
+    if(time % 2 !== 0) setTime( time => time +1);
     clearInterval(timeInterval);
-    if(forward === false){      
-      timeInterval = setInterval(() => {
-        setTime((time) => time + 2);
-      }, runTime);  
-      setForward(true);   
-    }else{
+    if(forward === 2){
       timeInterval = setInterval(() => {
         setTime((time) => time + 4);
       }, runTime); 
-      setForward(false);
+      setForward(3);
+    }else{
+      timeInterval = setInterval(() => {
+        setTime((time) => time + 2);
+      }, runTime);  
+      setForward(2);
     }
-         
   }
-  const backwardProgram = () =>{  
-    clearInterval(timeInterval);  
-    timeInterval = setInterval(() => {
-      setTime((time) => time - 2);
-    }, runTime);     
-  }
+
+  //停止按鈕
   const stopProgram = () => {
     clearInterval(timeInterval);
-    return '24:00'
+    setForward(0);
   }
+
+  //重製按鈕
   const resetProgram = () => {
     clearInterval(timeInterval);
     setTime(0);
+    setForward(0);
   }
-  const speedHandler = (e)=>{
-    setSpeed(speed+1);
-  }
-  const newSpeed = useCallback(()=>{
-    return speed
-  },[speed]) 
 
+   // userEffect
   useEffect(() => {
     asyncFetch();
     return function cleanup() {
       clearInterval(timeInterval);
     }
   }, []);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -211,20 +280,18 @@ function App() {
           <Button type="primary" onClick={runProgram}>執行模擬</Button>
         </div>
       </header>
-      
+      {console.log(time)}
       <main className='App-main'>
         <div className='time-zone'>
           <div className='time-text'>時間</div>
-          <div className='time-clock'>{ time < 960 && time >= 0 ? timeTickHandler() : stopProgram() }</div>
-          <div className='time-speed'>
-              <Button icon={<BackwardOutlined />} ghost onClick={backwardProgram} shape="circle" size="large" />
-              {console.log(time)}
+          <div className='time-clock'>{ timeTickHandler() }</div>
+          <div className='time-speed'>         
               <Button icon={<CaretRightOutlined />} ghost onClick={runProgram} shape="circle" size="large" />
               <Button icon={<PauseOutlined />} ghost onClick={stopProgram} shape="circle" size="large" />
-              <Button icon={<ForwardOutlined/>} ghost onClick={forwardProgram} shape="circle" size="large" />         
+              <Button icon={forward === 0 ? <ForwardOutlined/> : forward === 1 ? <ForwardOutlined/> : forward === 2 ? <ForwardOutlined/> : <FastForwardIcon/>} ghost onClick={forwardProgram} shape="circle" size="large" />         
           </div>
           <div className='time-slider'>
-            <Slider min={0} max={960} marks={marks} defaultValue={0} value={time} />
+            <Slider min={0} max={960} marks={marks} defaultValue={0} value={time} onChange={onChangeSlider} step={1}/>
           </div>
         </div>
         <div className='App-row' style={{alignItems: 'stretch'}}>
@@ -232,7 +299,7 @@ function App() {
           <div className='App-panel'>
             <div className='App-box'>
               <div className='App-box-content flex justify-center align-center'>
-                <Process speed={newSpeed} />           
+                <Process {...procesConfig} />           
               </div>
             </div>          
           </div>
@@ -359,7 +426,7 @@ function App() {
               <div className='App-box'>
                 <div className='App-box-content'>
                   <h3>Load Consumption</h3>
-                  <Area data={datajson} {...config} />
+                  <Area data={drawCharts()} {...config} />
                 </div>
               </div>          
             </div>
@@ -371,13 +438,13 @@ function App() {
                   <div className='App-box App-box-medium'>
                     <div className='App-box-content'>
                       <h3>ESS-E0001</h3>
-                      <Area data={datajson} {...config2} />
+                      <Area data={drawCharts()} {...config2} />
                     </div>
                   </div>
                   <div className='App-box App-box-medium'>
                     <div className='App-box-content'>
                       <h3>ESS-E0001</h3>
-                      <Area data={datajson} {...config2} />
+                      <Area data={drawCharts()} {...config2} />
                     </div>
                   </div>         
               </div>
@@ -386,13 +453,13 @@ function App() {
                   <div className='App-box App-box-medium'>
                     <div className='App-box-content'>
                       <h3>PV-P0001</h3>
-                      <Area data={datajson} {...config2} />
+                      <Area data={drawCharts()} {...config2} />
                     </div>
                   </div>
                   <div className='App-box App-box-medium'>
                     <div className='App-box-content'>
                       <h3>PV-P0001</h3>
-                      <Area data={datajson} {...config2} />
+                      <Area data={drawCharts()} {...config2} />
                     </div>
                   </div>         
               </div>             

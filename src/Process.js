@@ -7,14 +7,9 @@ import home from './home.svg';
 import solar from './solar.svg';
 import store from './store.svg';
 
+//容器寬度
 const containerWidth = 866;
-insertCss(`
-        @keyframes ant-line {
-          to {
-              stroke-dashoffset: -1000
-          }
-        }
-`)
+
 //能源網路
 function node_energySource(){
   const wrap = document.createElement('div')
@@ -56,11 +51,11 @@ function node_taipower(num){
 }
 
 //儲能系統
-function node_store(num){
+function node_store(num,power){
   const wrap = document.createElement('div')
   const image = document.createElement('img')
   const text = document.createElement("div")          
-  text.innerText = `儲能系統 \n ${num}kW` 
+  text.innerText = `儲能系統 \n ${num}kWh \n ${power}功率` 
   text.style.color = '#fff'
   text.style.textAlign = 'center'
   text.style.lineHeight = '1.2'
@@ -147,15 +142,18 @@ function node_home(num){
   return wrap
 }
 
-
+// component Process
 export default function Process ({speed}) {
-   
+    //狀態
     const container = useRef(null)
     const [width,setWidth] = useState(0);
+
     const resizeUpdate = (e) =>{
       let w = container.current.offsetWidth;
       setWidth(w);
     }
+
+    //useEffect
     useEffect(()=> {
       resizeUpdate();
       window.addEventListener('resize',resizeUpdate);   
@@ -190,17 +188,17 @@ export default function Process ({speed}) {
         width: 151,
         height: 161,
         shape: 'html',
-        html: node_taipower(100+speed())
+        html: node_taipower(100)
       })
       
       // 儲能系統
       const icon_store = graph.addNode({
         x: 700 * (width/containerWidth),
-        y: 200,
+        y: 185,
         width: 74,
         height: 118,
         shape: 'html',
-        html: node_store(120),
+        html: node_store(120,100),
       })
 
       // 太陽能發電
@@ -254,7 +252,7 @@ export default function Process ({speed}) {
       graph.addEdge({
         source: icon_solar,
         target: target,
-        label:'太陽能',
+        // label:'太陽能',
         connector: { name: 'smooth' },        
         attrs: {
           line: {
@@ -318,7 +316,16 @@ export default function Process ({speed}) {
             },
           },
         },
-      })      
+      })
+
+      //動畫速度
+      insertCss(`
+        @keyframes ant-line {
+          to {
+              stroke-dashoffset: ${ speed === 0 ? -500 : speed === 1 ? -1000 : speed === 2 ? -2000 : -3000}
+          }
+        }
+      `)
 
       return () =>{
         window.removeEventListener('resize',resizeUpdate)
