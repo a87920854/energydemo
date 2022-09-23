@@ -73,6 +73,7 @@ const config = {
   height: 300,
   xField: 'Date',
   yField: 'scales',
+  seriesField: 'type',
   xAxis: {
     range: [0, 1],
     tickCount: 5, 
@@ -91,20 +92,13 @@ const config = {
       }
     }
   },
-  line:{
-    color: '#009CCD',
-    size:1
-  },
-  smooth: 'true',
-  areaStyle: () => {
-    return {
-      fill: 'l(270) 0:#272E36 0.5:#009CCD 1:#009CCD',
-    };
-  },
+  color: ['#00CDA8', '#009CCD'],
+  smooth: 'true',  
   meta: {
     Date: {
       min: 0,
       max: 100,
+      range: [0, 1]
     },
   },
   animation: {
@@ -141,7 +135,7 @@ const config2 = {
   },
   line:{
     color: '#009CCD',
-    size:1
+    size:2
   },
   smooth: 'true',
   areaStyle: () => {
@@ -153,12 +147,14 @@ const config2 = {
 
 // 計時器
 let timeInterval = null;
+let timeOut = null;
 
 // App
 function App() {
   //狀態
   const [time, setTime] = useState(0);
   const [data, setData] = useState([]);
+  const [data2, setData2] = useState([]);
   const [start, setStart] = useState(false);
   const [forward, setForward] = useState(0);
   
@@ -191,6 +187,7 @@ function App() {
 
   //滾動條 change 事件
   const onChangeSlider = (newValue) => {
+    clearInterval(timeInterval); 
     setTime(newValue);
     setForward(3);
   }
@@ -213,13 +210,23 @@ function App() {
         let data = JSON.stringify(json);
         data = JSON.parse(data);
         setData(data);
-        setTimeout(()=>{
-          runProgram();
-        },2000)        
+        clearTimeout(timeOut);              
       })
       .catch((error) => {
         console.log('fetch data failed', error);
       });
+
+    fetch('http://192.168.101.85:3000/data2.json')
+    .then((response) => response.json())
+    .then((json) => {
+      let data = JSON.stringify(json);
+      data = JSON.parse(data);
+      setData2(data);
+      clearTimeout(timeOut);              
+    })
+    .catch((error) => {
+      console.log('fetch data failed', error);
+    });
   };
 
   //繪製圖表
@@ -229,9 +236,23 @@ function App() {
     })
     return newData;
   }
+
+  //繪製圖表2
+  const drawCharts2 = () => {
+    const newData = data2.filter((item,index)=>{
+      return index < Math.floor(time/5);
+    })
+    return newData;
+  }
+  
   //執行模擬
   const startProgram = () =>{
     setStart(true);
+    setTime(0);
+    clearTimeout(timeOut);
+    timeOut = setTimeout(()=>{
+      runProgram();
+    },1000) 
   }
 
   // play按鈕
@@ -282,8 +303,9 @@ function App() {
     asyncFetch();
     return function cleanup() {
       clearInterval(timeInterval);
+      clearTimeout(timeOut);
     }
-  }, []);
+  },[]);
 
   return (
     <div className="App">
@@ -323,7 +345,6 @@ function App() {
           <Button type="primary" onClick={startProgram}>執行模擬</Button>
         </div>
       </header>
-      {console.log(data)}
       {start ? '':<LoadingData />}
       {data.length !== 0 ? 
         <main className='App-main'>
@@ -473,7 +494,7 @@ function App() {
               <div className='App-box'>
                 <div className='App-box-content'>
                   <h3>Load Consumption</h3>
-                  <Area data={drawCharts()} {...config} />
+                  <Area data={drawCharts2()} {...config} />
                 </div>
               </div>          
             </div>

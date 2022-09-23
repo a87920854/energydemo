@@ -10,7 +10,7 @@ const X6ReactPortalProvider = Portal.getProvider()
 const containerWidth = 866;
 
 // component Process
-export default function Process ({speed,time}) {
+export default function Process ({speed}) {
     //狀態
     const container = useRef(null)
     const [width,setWidth] = useState(0);

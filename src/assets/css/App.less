@@ -295,10 +295,13 @@
     text-align: center;
     line-height: 1;
     font-size: 12px;
-    & span{
-      color: #50ffdf;
+    & .big{
+      color: #69ccdb;
       font-size: 28px;
       font-weight: 500;
+    }
+    & span{
+      color: @custom-text-color;
     }
   }
 }
@@ -336,4 +339,8 @@ main{
   top: -100%;
   width: 100%;
   z-index: -2;
+}
+
+.load-data + .App-spin{
+  display: none;
 }
