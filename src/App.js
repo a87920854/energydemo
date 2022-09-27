@@ -1,11 +1,35 @@
 import React, { useState, useEffect, createContext } from 'react';
 import { Button, Select, Slider, notification, Spin } from 'antd';
 import Icon, { ForwardOutlined, CaretRightOutlined, PauseOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Area } from '@ant-design/plots';
+import { Area, Mix } from '@ant-design/plots';
 import Process from './component/Process';
 import LoadingData from './component/LoadingData';
 import logo from './assets/images/logo.svg';
 import './assets/css/App.less';
+
+
+const endpoint = "https://chqqqd3bnnbp7gvnkan44dogie.appsync-api.ap-northeast-1.amazonaws.com/graphql";
+const headers = {
+	"content-type": "application/json",
+  "x-api-key": "da2-3ymzoepxwvcchebmo4w5oqdeam"
+};
+const graphqlQuery = {
+    "query": `query { sceneItem { code msg data { sceneType sceneLabel } } }`,
+    "variables": {}
+};
+
+const options = {
+    "method": "POST",
+    "headers": headers,
+    "body": JSON.stringify(graphqlQuery)
+};
+
+async function graphalapi(){
+  const response = await fetch(endpoint, options);
+  const data = await response.json();
+  console.log(data.data); // data
+}
+
 
 // context
 export const TimeContext = createContext(0);
@@ -70,6 +94,166 @@ const marks = {
 
 // 圖表設定
 const config = {
+  height: 300,
+  appendPadding: 8,
+  tooltip: {
+    shared: true,
+  },
+  syncViewPadding: true,
+  plots: [
+    {
+      type: 'area',
+      options: {
+        color: ['#009CCD','#00CDA8'],
+        data: [
+          {
+            date: '2015-02',
+            value: 160,
+            type:'a'
+          },
+          {
+            date: '2015-08',
+            value: 245,
+            type:'a'
+          },
+          {
+            date: '2016-01',
+            value: 487,
+            type:'a'
+          },
+          {
+            date: '2017-02',
+            value: 500,
+            type:'a'
+          },
+          {
+            date: '2018-01',
+            value: 503,
+            type:'a'
+          },
+          {
+            date: '2018-08',
+            value: 514,
+            type:'a'
+          },
+          {
+            date: '2015-02',
+            value: 160,
+            type:'b'
+          },
+          {
+            date: '2015-08',
+            value: 245,
+            type:'b'
+          },
+          {
+            date: '2016-01',
+            value: 487,
+            type:'b'
+          },
+          {
+            date: '2017-02',
+            value: 500,
+            type:'b'
+          },
+          {
+            date: '2018-01',
+            value: 503,
+            type:'b'
+          },
+          {
+            date: '2018-08',
+            value: 514,
+            type:'b'
+          },
+        ],
+        xField: 'date',
+        yField: 'value',
+        seriesField: 'type', 
+        meta: {
+          date: {
+            sync: true,
+            range: [0, 1]
+          },
+          value: {
+            alias: '店数(间)',
+          },
+        },
+        label: {
+          position: 'middle',
+        },
+      },
+    },
+    {
+      type: 'line',
+      options: {
+        data: [
+          {
+            date: '2015-02',
+            value: null,
+          },
+          {
+            date: '2015-08',
+            value: 0.029,
+          },
+          {
+            date: '2016-01',
+            value: 0.094,
+          },
+          {
+            date: '2017-02',
+            value: 0.148,
+          },
+          {
+            date: '2018-01',
+            value: 0.055,
+          },
+          {
+            date: '2018-08',
+            value: 0.045,
+          },
+        ],
+        xField: 'date',
+        yField: 'value',
+        xAxis: false,
+        yAxis: {
+          line: null,
+          grid: null,
+          position: 'right',
+          max: 0.16,
+          tickCount: 8,
+        },
+        meta: {
+          date: {
+            sync: 'date',
+            range: [0, 1]
+          },
+          value: {
+            alias: '递增',
+            formatter: (v) => `${(v * 100).toFixed(1)}%`,
+          },
+        },
+        smooth: true,
+        label: {
+          callback: (value) => {
+            return {
+              offsetY: value === 0.148 ? 36 : value === 0.055 ? 0 : 20,
+              style: {
+                fill: '#1AAF8B',
+                fontWeight: 700,
+                stroke: '#fff',
+                lineWidth: 1,
+              },
+            };
+          },
+        },
+        color: '#1AAF8B',
+      },
+    },
+  ],
+};
+
+const config_x = {
   height: 300,
   xField: 'Date',
   yField: 'scales',
@@ -204,7 +388,7 @@ function App() {
 
   //讀取API
   const asyncFetch = () => {
-    fetch('http://192.168.101.85:3000/data.json')
+    fetch('http://192.168.101.75:3000/data.json')
       .then((response) => response.json())
       .then((json) => {
         let data = JSON.stringify(json);
@@ -216,7 +400,7 @@ function App() {
         console.log('fetch data failed', error);
       });
 
-    fetch('http://192.168.101.85:3000/data2.json')
+    fetch('http://192.168.101.75:3000/data2.json')
     .then((response) => response.json())
     .then((json) => {
       let data = JSON.stringify(json);
@@ -301,6 +485,7 @@ function App() {
    // userEffect
   useEffect(() => {
     asyncFetch();
+    graphalapi();
     return function cleanup() {
       clearInterval(timeInterval);
       clearTimeout(timeOut);
@@ -494,7 +679,8 @@ function App() {
               <div className='App-box'>
                 <div className='App-box-content'>
                   <h3>Load Consumption</h3>
-                  <Area data={drawCharts2()} {...config} />
+                  <Mix {...config} />
+                  {/* <Area data={drawCharts2()} {...config} /> */}
                 </div>
               </div>          
             </div>
